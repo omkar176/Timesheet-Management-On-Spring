@@ -5,3 +5,6 @@ syntax: glob
 .classpath
 .project
 .settings*
+.idea*
+.springBeans
+*.iml
