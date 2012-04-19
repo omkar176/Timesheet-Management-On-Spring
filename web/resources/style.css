@@ -1,0 +1,41 @@
+table {
+    margin: 10px;
+    padding: 5px;
+    border: 2px solid black;
+    width: 300px;
+}
+
+th {
+    text-align: left;
+}
+
+h1 {
+    margin: 10px;
+}
+
+a {
+    margin: 10px;
+}
+
+label {
+    display: block;
+    text-align: left;
+}
+
+#employee {
+    padding-left: 10px;
+    position: relative;
+}
+
+#employee ul {
+    padding: 0;
+}
+
+#employee li {
+    list-style: none;
+    margin-bottom: 1em;
+}
+
+.hidden {
+    display: none;
+}
