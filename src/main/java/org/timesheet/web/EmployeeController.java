@@ -28,7 +28,6 @@ public class EmployeeController {
     @Autowired
     public EmployeeController(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
-        EntityGenerator.crateEmployees(employeeDao);
     }
 
     /**

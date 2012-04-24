@@ -6,28 +6,26 @@
 
 <html>
 <head>
-    <title>Employees</title>
+    <title>Managers</title>
     <link rel="stylesheet" href="/timesheet-app/resources/style.css" type="text/css">
 </head>
 <body>
-    <h1>List of employees</h1>
-    <a href="employees?new">Add new employee</a>
+    <h1>List of managers</h1>
+    <a href="managers?new">Add new manager</a>
     <table cellspacing="5">
         <tr>
             <th>Name</th>
-            <th>Department</th>
             <th>Details</th>
             <th>Delete</th>
         </tr>
-        <c:forEach items="#{employees}" var="emp">
+        <c:forEach items="#{managers}" var="man">
             <tr>
-                <td>${emp.name}</td>
-                <td>${emp.department}</td>
+                <td>${man.name}</td>
                 <td>
-                    <a href="employees/${emp.id}">Go to page</a>
+                    <a href="managers/${man.id}">Go to page</a>
                 </td>
                 <td>
-                    <sf:form action="employees/${emp.id}" method="delete">
+                    <sf:form action="managers/${man.id}" method="delete">
                         <input type="submit" value="[X]" />
                     </sf:form>
                 </td>

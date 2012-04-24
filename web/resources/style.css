@@ -22,16 +22,16 @@ label {
     text-align: left;
 }
 
-#employee {
+#list {
     padding-left: 10px;
     position: relative;
 }
 
-#employee ul {
+#list ul {
     padding: 0;
 }
 
-#employee li {
+#list li {
     list-style: none;
     margin-bottom: 1em;
 }

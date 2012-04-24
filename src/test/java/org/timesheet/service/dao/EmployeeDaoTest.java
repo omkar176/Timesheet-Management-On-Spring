@@ -1,32 +1,21 @@
 package org.timesheet.service.dao;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "/persistence-beans.xml")
-public class EmployeeDaoTest extends AbstractJUnit4SpringContextTests {
+public class EmployeeDaoTest extends DomainAwareBase {
 
     @Autowired
     private EmployeeDao employeeDao;
-
-    @After
-    public void cleanUp() {
-        List<Employee> employees = employeeDao.list();
-        for (Employee employee : employees) {
-            employeeDao.remove(employee);
-        }
-    }
 
     @Test
     public void testAdd() {

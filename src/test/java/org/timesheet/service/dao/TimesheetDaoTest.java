@@ -1,11 +1,9 @@
 package org.timesheet.service.dao;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
 import org.timesheet.domain.Manager;
 import org.timesheet.domain.Task;
@@ -14,12 +12,10 @@ import org.timesheet.domain.Timesheet;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "/persistence-beans.xml")
-public class TimesheetDaoTest extends AbstractJUnit4SpringContextTests {
+public class TimesheetDaoTest extends DomainAwareBase {
 
     @Autowired
     private TimesheetDao timesheetDao;
@@ -28,29 +24,33 @@ public class TimesheetDaoTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private TaskDao taskDao;
 
+    @Autowired
+    private EmployeeDao employeeDao;
+
+    @Autowired
+    private ManagerDao managerDao;
+
     // common fields for timesheet creation
     private Task task;
     private Employee employee;
 
-    @Before
+    @Override
+    public void deleteAllDomainEntities() {
+        super.deleteAllDomainEntities();
+        setUp();
+    }
+
     public void setUp() {
         employee = new Employee("Steve", "Engineering");
+        employeeDao.add(employee);
+
         Manager manager = new Manager("Bob");
+        managerDao.add(manager);
 
         task = new Task("Learn Spring", manager, employee);
         taskDao.add(task);
     }
 
-    @After
-    public void cleanUp() {
-        List<Timesheet> timesheets = timesheetDao.list();
-        for (Timesheet timesheet : timesheets) {
-            timesheetDao.remove(timesheet);
-        }
-
-        taskDao.remove(task);
-    }
-    
     @Test
     public void testAdd() {
         int size = timesheetDao.list().size();
@@ -66,15 +66,13 @@ public class TimesheetDaoTest extends AbstractJUnit4SpringContextTests {
         Timesheet timesheet = newTimesheet();
         timesheetDao.add(timesheet);
 
-        // update timesheet and some relations
+        // update timesheet
         timesheet.setHours(6);
-        timesheet.getTask().getManager().setName("Woz");
         taskDao.update(timesheet.getTask());
         timesheetDao.update(timesheet);
 
         Timesheet found = timesheetDao.find(timesheet.getId());
         assertTrue(6 == found.getHours());
-        assertEquals("Woz", found.getTask().getManager().getName());
     }
 
     @Test

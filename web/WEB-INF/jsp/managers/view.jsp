@@ -3,22 +3,17 @@
 
 <html>
 <head>
-    <title>Employee page</title>
+    <title>Manager page</title>
     <link rel="stylesheet" href="/timesheet-app/resources/style.css" type="text/css">
 </head>
 <body>
-    <h2>Employee info</h2>
+    <h2>Manager info</h2>
     <div id="list">
         <sf:form method="post">
             <ul>
                 <li>
                     <label for="name">Name:</label>
-                    <input name="name" id="name" value="${employee.name}" disabled="true"/>
-                </li>
-                <li>
-                    <label for="department">Department:</label>
-                    <input name="department" id="department"
-                           value="${employee.department}" disabled="true" />
+                    <input name="name" id="name" value="${manager.name}" disabled="true"/>
                 </li>
                 <li>
                     <input type="button" value="Unlock" id="unlock" />
@@ -29,7 +24,7 @@
     </div>
 
     <br /><br />
-    <a href="../employees">Go Back</a>
+    <a href="../managers">Go Back</a>
 
     <script src="/timesheet-app/resources/jquery-1.7.1.js"></script>
     <script>
@@ -39,7 +34,6 @@
 
                 // enable stuff
                 $("#name").removeAttr("disabled");
-                $("#department").removeAttr("disabled");
                 $("#save").removeClass("hidden");
             });
         })();

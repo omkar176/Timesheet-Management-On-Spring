@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
 import org.timesheet.service.dao.EmployeeDao;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = {"/persistence-beans.xml", "/controllers.xml"})
-public class EmployeeControllerTest extends AbstractJUnit4SpringContextTests {
+public class EmployeeControllerTest extends DomainAwareBase {
     
     @Autowired
     private EmployeeDao employeeDao;
@@ -25,7 +25,7 @@ public class EmployeeControllerTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private EmployeeController controller;
     
-    private Model model; // user for controller
+    private Model model; // used for controller
     
     @Before
     public void setUp() {

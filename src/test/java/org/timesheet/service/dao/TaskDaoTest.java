@@ -1,10 +1,9 @@
 package org.timesheet.service.dao;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
 import org.timesheet.domain.Manager;
 import org.timesheet.domain.Task;
@@ -17,19 +16,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "/persistence-beans.xml")
-public class TaskDaoTest extends AbstractJUnit4SpringContextTests {
+public class TaskDaoTest extends DomainAwareBase {
     
     @Autowired
     private TaskDao taskDao;
 
-    @After
-    public void cleanUp() {
-        // cascade also deletes all created managers and employees
-        List<Task> tasks = taskDao.list();
-        for (Task task : tasks) {
-            taskDao.remove(task);
-        }
-    }
+    @Autowired
+    private ManagerDao managerDao;
+
+    @Autowired
+    private EmployeeDao employeeDao;
 
     @Test
     public void testAdd() {
@@ -46,14 +42,12 @@ public class TaskDaoTest extends AbstractJUnit4SpringContextTests {
         Task task = newSpringTask();
         taskDao.add(task);
         
-        // update task and some of relations
-        task.getManager().setName("Stephen");
+        // update task
         task.setDescription("Learn Spring 3.1");
         taskDao.update(task);
 
         Task found = taskDao.find(task.getId());
         assertEquals("Learn Spring 3.1", found.getDescription());
-        assertEquals("Stephen", found.getManager().getName());
     }
 
     @Test
@@ -102,10 +96,15 @@ public class TaskDaoTest extends AbstractJUnit4SpringContextTests {
      * @return Dummy task for testing
      */
     private Task newSpringTask() {
-        return new Task("Learn Spring",
-                new Manager("Bob"),
-                new Employee("Steve", "Business"),
-                new Employee("Woz", "Engineering"));
+        Manager bob = new Manager("Bob");
+        managerDao.add(bob);
+
+        Employee steve = new Employee("Steve", "Business");
+        Employee woz = new Employee("Woz", "Engineering");
+        employeeDao.add(steve);
+        employeeDao.add(woz);
+
+        return new Task("Learn Spring", bob, steve, woz);
     }
 
     /**
@@ -122,6 +121,7 @@ public class TaskDaoTest extends AbstractJUnit4SpringContextTests {
         
         Manager manager = new Manager(
                 templateTask.getManager().getName());
+        managerDao.add(manager);
 
         List<Employee> templateEmployees = templateTask.getAssignedEmployees();
         Employee[] employees = new Employee[templateEmployees.size()];
@@ -132,6 +132,7 @@ public class TaskDaoTest extends AbstractJUnit4SpringContextTests {
                     templateEmployee.getName() + randomInfo,
                     templateEmployee.getDepartment() + randomInfo);
             employees[idx++] = employee;
+            employeeDao.add(employee);
         }
 
         return new Task(description, manager, employees);

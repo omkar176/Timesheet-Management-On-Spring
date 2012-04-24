@@ -1,33 +1,22 @@
 package org.timesheet.service.dao;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Manager;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "/persistence-beans.xml")
-public class ManagerDaoTest extends AbstractJUnit4SpringContextTests {
+public class ManagerDaoTest extends DomainAwareBase {
     
     @Autowired
     private ManagerDao managerDao;
     
-    @After
-    public void cleanUp() {
-        List<Manager> managers = managerDao.list();
-        for (Manager manager : managers) {
-            managerDao.remove(manager);
-        }
-    }
-
     @Test
     public void testAdd() {
         int size = managerDao.list().size();

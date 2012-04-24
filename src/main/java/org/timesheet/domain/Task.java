@@ -9,77 +9,73 @@ import java.util.List;
 @Table(name = "task")
 public class Task {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	
-	@ManyToMany(cascade = CascadeType.ALL)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToMany
     @JoinTable(name = "task_employee",
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = {@JoinColumn(name = "employee_id")}
     )
-	private List<Employee> assignedEmployees = new ArrayList<Employee>();
+    private List<Employee> assignedEmployees = new ArrayList<Employee>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "manager_id")
-	private Manager manager;
+    @OneToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
     private String description;
     boolean completed;
 
-	public Task() {
-	}
-	
-	public Task(String description, Manager manager, Employee... employees) {
+    public Task() {
+    }
+
+    public Task(String description, Manager manager, Employee... employees) {
         this.description = description;
         this.manager = manager;
-		assignedEmployees.addAll(Arrays.asList(employees));
-		completed = false;
-	}
+        assignedEmployees.addAll(Arrays.asList(employees));
+        completed = false;
+    }
 
-	public Manager getManager() {
-		return manager;
-	}
-	
-	public List<Employee> getAssignedEmployees() {
-		return assignedEmployees;
-	}
-	
-	public void addEmployee(Employee e) {
-		assignedEmployees.add(e);
-	}
-	
-	public void removeEmployee(Employee e) {
-		assignedEmployees.remove(e);
-	}
-	
-	public void completeTask() {
-		completed = true;
-	}
+    public Manager getManager() {
+        return manager;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public List<Employee> getAssignedEmployees() {
+        return assignedEmployees;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void addEmployee(Employee e) {
+        assignedEmployees.add(e);
+    }
 
-	public boolean isCompleted() {
-		return completed;
-	}
+    public void removeEmployee(Employee e) {
+        assignedEmployees.remove(e);
+    }
 
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setAssignedEmployees(List<Employee> assignedEmployees) {
-		this.assignedEmployees = assignedEmployees;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setManager(Manager manager) {
-		this.manager = manager;
-	}
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public void setAssignedEmployees(List<Employee> assignedEmployees) {
+        this.assignedEmployees = assignedEmployees;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
 
     public String getDescription() {
         return description;
