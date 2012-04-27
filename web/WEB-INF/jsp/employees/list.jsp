@@ -12,7 +12,7 @@
 <body>
     <h1>List of employees</h1>
     <a href="employees?new">Add new employee</a>
-    <table cellspacing="5">
+    <table cellspacing="5" class="main-table">
         <tr>
             <th>Name</th>
             <th>Department</th>
@@ -27,8 +27,8 @@
                     <a href="employees/${emp.id}">Go to page</a>
                 </td>
                 <td>
-                    <sf:form action="employees/${emp.id}" method="delete">
-                        <input type="submit" value="[X]" />
+                    <sf:form action="employees/${emp.id}" method="delete" cssClass="delete">
+                        <input type="submit" class="delete-button" value="" />
                     </sf:form>
                 </td>
             </tr>

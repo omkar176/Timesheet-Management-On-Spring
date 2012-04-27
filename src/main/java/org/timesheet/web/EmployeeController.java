@@ -3,12 +3,15 @@ package org.timesheet.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.timesheet.domain.Employee;
 import org.timesheet.service.dao.EmployeeDao;
-import org.timesheet.web.helpers.EntityGenerator;
+import org.timesheet.web.exceptions.EmployeeDeleteException;
 
 import java.util.List;
 
@@ -21,13 +24,13 @@ public class EmployeeController {
 
     private EmployeeDao employeeDao;
 
-    /**
-     * Creates new EmployeeController
-     * @param employeeDao Injected DAO for manipulating employees
-     */
     @Autowired
-    public EmployeeController(EmployeeDao employeeDao) {
+    public void setEmployeeDao(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
+    }
+
+    public EmployeeDao getEmployeeDao() {
+        return employeeDao;
     }
 
     /**
@@ -46,14 +49,34 @@ public class EmployeeController {
     /**
      * Deletes employee with specified ID
      * @param id Employee's ID
-     * @return redirects to employees
+     * @return redirects to employees if everything was ok
+     * @throws EmployeeDeleteException When employee cannot be deleted
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String deleteEmployee(@PathVariable("id") long id) {
-        Employee toDelete = employeeDao.find(id);
-        employeeDao.remove(toDelete);
+    public String deleteEmployee(@PathVariable("id") long id)
+            throws EmployeeDeleteException {
 
+        Employee toDelete = employeeDao.find(id);
+        boolean wasDeleted = employeeDao.removeEmployee(toDelete);
+
+        if (!wasDeleted) {
+            throw new EmployeeDeleteException(toDelete);
+        }
+
+        // everything OK, see remaining employees
         return "redirect:/employees";
+    }
+
+    /**
+     * Handles EmployeeDeleteException
+     * @param e Thrown exception with employee that couldn't be deleted
+     * @return binds employee to model and returns employees/delete-error
+     */
+    @ExceptionHandler(EmployeeDeleteException.class)
+    public ModelAndView handleDeleteException(EmployeeDeleteException e) {
+        ModelMap model = new ModelMap();
+        model.put("employee", e.getEmployee());
+        return new ModelAndView("employees/delete-error", model);
     }
 
     /**

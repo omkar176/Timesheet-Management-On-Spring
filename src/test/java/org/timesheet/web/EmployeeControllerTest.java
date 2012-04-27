@@ -7,14 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
 import org.timesheet.service.dao.EmployeeDao;
+import org.timesheet.web.exceptions.EmployeeDeleteException;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(locations = {"/persistence-beans.xml", "/controllers.xml"})
 public class EmployeeControllerTest extends DomainAwareBase {
@@ -42,17 +46,23 @@ public class EmployeeControllerTest extends DomainAwareBase {
 
     @Test
     public void testShowEmployees() {
+        // prepare some data
+        Employee employee = new Employee("Lucky", "Strike");
+        employeeDao.add(employee);
+
+        // use controller
         String view = controller.showEmployees(model);
         assertEquals("employees/list", view);
 
         List<Employee> listFromDao = employeeDao.list();
         Collection<?> listFromModel = (Collection<?>) model.asMap().get("employees");
 
+        assertTrue(listFromModel.contains(employee));
         assertTrue(listFromDao.containsAll(listFromModel));
     }
     
     @Test
-    public void testDeleteEmployee() {
+    public void testDeleteEmployeeOk() throws EmployeeDeleteException {
         // prepare ID to delete
         Employee john = new Employee("John Lennon", "Singing");
         employeeDao.add(john);
@@ -62,6 +72,37 @@ public class EmployeeControllerTest extends DomainAwareBase {
         String view = controller.deleteEmployee(id);
         assertEquals("redirect:/employees", view);
         assertNull(employeeDao.find(id));
+    }
+
+    @Test(expected = EmployeeDeleteException.class)
+    public void testDeleteEmployeeThrowsException() throws EmployeeDeleteException {
+        // prepare ID to delete
+        Employee john = new Employee("John Lennon", "Singing");
+        employeeDao.add(john);
+        long id = john.getId();
+
+        // mock DAO for this call
+        EmployeeDao mockedDao = mock(EmployeeDao.class);
+        when(mockedDao.removeEmployee(john)).thenReturn(false);
+
+        EmployeeDao originalDao = controller.getEmployeeDao();
+        try {
+            // delete & expect exception
+            controller.setEmployeeDao(mockedDao);
+            controller.deleteEmployee(id);
+        } finally {
+            controller.setEmployeeDao(originalDao);
+        }
+    }
+
+    @Test
+    public void testHandleDeleteException() {
+        Employee john = new Employee("John Lennon", "Singing");
+        EmployeeDeleteException e = new EmployeeDeleteException(john);
+        ModelAndView modelAndView = controller.handleDeleteException(e);
+
+        assertEquals("employees/delete-error", modelAndView.getViewName());
+        assertTrue(modelAndView.getModelMap().containsValue(john));
     }
     
     @Test

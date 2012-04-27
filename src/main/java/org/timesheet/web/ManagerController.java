@@ -3,12 +3,15 @@ package org.timesheet.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.timesheet.domain.Manager;
 import org.timesheet.service.dao.ManagerDao;
-import org.timesheet.web.helpers.EntityGenerator;
+import org.timesheet.web.exceptions.ManagerDeleteException;
 
 import java.util.List;
 
@@ -18,24 +21,24 @@ public class ManagerController {
 
     private ManagerDao managerDao;
 
-    /**
-     * Creates new ManagerController
-     * @param managerDao Injected DAO for manipulating managers
-     */
     @Autowired
-    public ManagerController(ManagerDao managerDao) {
+    public void setManagerDao(ManagerDao managerDao) {
         this.managerDao = managerDao;
+    }
+
+    public ManagerDao getManagerDao() {
+        return managerDao;
     }
 
     /**
      * Retrieves managers, puts them in the model and returns corresponding view
-     * @param model Model to put employees to
+     * @param model Model to put managers to
      * @return managers/list
      */
     @RequestMapping(method = RequestMethod.GET)
     public String showManagers(Model model) {
-        List<Manager> employees = managerDao.list();
-        model.addAttribute("managers", employees);
+        List<Manager> managers = managerDao.list();
+        model.addAttribute("managers", managers);
 
         return "managers/list";
     }
@@ -43,14 +46,34 @@ public class ManagerController {
     /**
      * Deletes manager with specified ID
      * @param id Manager's ID
-     * @return redirects to managers
+     * @return redirects to managers if everything was OK
+     * @throws ManagerDeleteException When manager cannot be deleted
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String deleteManager(@PathVariable("id") long id) {
-        Manager toDelete = managerDao.find(id);
-        managerDao.remove(toDelete);
+    public String deleteManager(@PathVariable("id") long id)
+            throws ManagerDeleteException {
 
+        Manager toDelete = managerDao.find(id);
+        boolean wasDeleted = managerDao.removeManager(toDelete);
+
+        if (!wasDeleted) {
+            throw new ManagerDeleteException(toDelete);
+        }
+
+        // everything OK, see remaining managers
         return "redirect:/managers";
+    }
+
+    /**
+     * Handles ManagerDeleteException
+     * @param e Thrown exception with manager that couldn't be deleted
+     * @return binds manager to model and returns managers/delete-error
+     */
+    @ExceptionHandler(ManagerDeleteException.class)
+    public ModelAndView handleDeleteException(ManagerDeleteException e) {
+        ModelMap model = new ModelMap();
+        model.put("manager", e.getManager());
+        return new ModelAndView("managers/delete-error", model);
     }
 
     /**

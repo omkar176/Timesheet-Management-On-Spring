@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.timesheet.DomainAwareBase;
+import org.timesheet.domain.Employee;
 import org.timesheet.domain.Manager;
+import org.timesheet.domain.Task;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +18,12 @@ public class ManagerDaoTest extends DomainAwareBase {
     
     @Autowired
     private ManagerDao managerDao;
+
+    @Autowired
+    private EmployeeDao employeeDao;
+
+    @Autowired
+    private TaskDao taskDao;
     
     @Test
     public void testAdd() {
@@ -76,5 +84,26 @@ public class ManagerDaoTest extends DomainAwareBase {
         // try to remove
         managerDao.remove(manager);
         assertNull(managerDao.find(manager.getId()));
+    }
+
+    @Test
+    public void testRemoveManager() {
+        Manager manager = new Manager("task-manager");
+        managerDao.add(manager);
+
+        Employee employee = new Employee("Jaromir", "Hockey");
+        employeeDao.add(employee);
+
+        Task task = new Task("test-task", manager, employee);
+        taskDao.add(task);
+
+        // try to remove -> shouldn't work
+        assertFalse(managerDao.removeManager(manager));
+
+        // remove task
+        taskDao.remove(task);
+
+        // should work -> no more tasks for manager
+        assertTrue(managerDao.removeManager(manager));
     }
 }

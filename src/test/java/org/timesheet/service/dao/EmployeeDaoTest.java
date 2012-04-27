@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.timesheet.DomainAwareBase;
 import org.timesheet.domain.Employee;
+import org.timesheet.domain.Manager;
+import org.timesheet.domain.Task;
+import org.timesheet.domain.Timesheet;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +19,15 @@ public class EmployeeDaoTest extends DomainAwareBase {
 
     @Autowired
     private EmployeeDao employeeDao;
+
+    @Autowired
+    private ManagerDao managerDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private TimesheetDao timesheetDao;
 
     @Test
     public void testAdd() {
@@ -76,6 +88,31 @@ public class EmployeeDaoTest extends DomainAwareBase {
         // try to remove
         employeeDao.remove(employee);
         assertNull(employeeDao.find(employee.getId()));
+    }
+
+    @Test
+    public void testRemoveEmployee() {
+        Manager manager = new Manager("task-manager");
+        managerDao.add(manager);
+
+        Employee employee = new Employee("Jaromir", "Hockey");
+        employeeDao.add(employee);
+
+        Task task = new Task("test-task", manager, employee);
+        taskDao.add(task);
+
+        Timesheet timesheet = new Timesheet(employee, task, 100);
+        timesheetDao.add(timesheet);
+
+        // try to remove -> shouldn't work
+        assertFalse(employeeDao.removeEmployee(employee));
+
+        // remove stuff
+        timesheetDao.remove(timesheet);
+        taskDao.remove(task);
+
+        // should work -> employee is now free
+        assertTrue(employeeDao.removeEmployee(employee));
     }
 
 }

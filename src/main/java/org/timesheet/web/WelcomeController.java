@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.timesheet.web.helpers.EntityGenerator;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.Date;
 
 @Controller
@@ -26,6 +25,7 @@ public class WelcomeController {
 
     @PostConstruct
     public void prepareFakeDomain() {
+        entityGenerator.deleteDomain();
         entityGenerator.generateDomain();
     }
     

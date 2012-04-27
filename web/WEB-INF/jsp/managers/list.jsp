@@ -12,7 +12,7 @@
 <body>
     <h1>List of managers</h1>
     <a href="managers?new">Add new manager</a>
-    <table cellspacing="5">
+    <table cellspacing="5" class="main-table">
         <tr>
             <th>Name</th>
             <th>Details</th>
@@ -25,8 +25,8 @@
                     <a href="managers/${man.id}">Go to page</a>
                 </td>
                 <td>
-                    <sf:form action="managers/${man.id}" method="delete">
-                        <input type="submit" value="[X]" />
+                    <sf:form action="managers/${man.id}" method="delete" cssClass="delete">
+                        <input type="submit" value="" class="delete-button" />
                     </sf:form>
                 </td>
             </tr>
