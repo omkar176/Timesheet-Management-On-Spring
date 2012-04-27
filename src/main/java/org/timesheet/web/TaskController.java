@@ -20,13 +20,13 @@ public class TaskController {
 
     private TaskDao taskDao;
 
-    /**
-     * Creates new TaskController
-     * @param taskDao Injected DAO for manipulating tasks
-     */
     @Autowired
-    public TaskController(TaskDao taskDao) {
+    public void setTaskDao(TaskDao taskDao) {
         this.taskDao = taskDao;
+    }
+
+    public TaskDao getTaskDao() {
+        return taskDao;
     }
 
     /**
