@@ -9,6 +9,10 @@ table, th {
     border-collapse: collapse;
 }
 
+.wide {
+    width: 600px;
+}
+
 .main-table th {
     background-color: green;
     color: white;
@@ -64,4 +68,9 @@ label {
     color: transparent;
     cursor: pointer;
     padding: 2px 8px;
+}
+
+.task-table {
+    width: 150px;
+    border: 1px solid #dcdcdc;
 }

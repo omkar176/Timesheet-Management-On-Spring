@@ -4,6 +4,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 
+<!-- resolve variables -->
+<%--@elvariable id="tasks" type="java.util.List<org.timesheet.domain.Task>"--%>
+
 <html>
 <head>
     <title>Tasks</title>
@@ -12,13 +15,13 @@
 <body>
     <h1>List of tasks</h1>
     <a href="tasks?new">Add new task</a>
-    <table cellspacing="5">
+    <table cellspacing="5" class="main-table wide">
         <tr>
-            <th>Description</th>
+            <th style="width: 35%;">Description</th>
             <th>Manager</th>
             <th>Employees</th>
             <th>Completed</th>
-            <th>Details</th>
+            <th style="width: 20%;">Details</th>
             <th>Delete</th>
         </tr>
         <c:forEach items="${tasks}" var="task">
@@ -30,18 +33,26 @@
                 <td>
                     <c:forEach items="${task.assignedEmployees}" var="emp">
                         <a href="employees/${emp.id}">${emp.name}</a>
-                        <br />
                     </c:forEach>
                 </td>
                 <td>
-                    <input type="checkbox" checked="${task.completed}">
+                    <div class="delete">
+                        <c:choose>
+                            <c:when test="${task.completed}">
+                                Done
+                            </c:when>
+                            <c:when test="${!task.completed}">
+                                In progress
+                            </c:when>
+                        </c:choose>
+                    </div>
                 </td>
                 <td>
                     <a href="tasks/${task.id}">Go to page</a>
                 </td>
                 <td>
-                    <sf:form action="tasks/${task.id}" method="delete">
-                        <input type="submit" value="[X]" />
+                    <sf:form action="tasks/${task.id}" method="delete" cssClass="delete">
+                        <input type="submit" value="" class="delete-button" />
                     </sf:form>
                 </td>
             </tr>
