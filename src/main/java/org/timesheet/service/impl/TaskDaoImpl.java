@@ -1,8 +1,10 @@
 package org.timesheet.service.impl;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.timesheet.domain.Task;
+import org.timesheet.domain.Timesheet;
 import org.timesheet.service.dao.TaskDao;
 
 import java.util.ArrayList;
@@ -30,7 +32,8 @@ public class TaskDaoImpl extends HibernateDao<Task, Long> implements TaskDao {
 
     @Override
     public List<Task> list() {
-        // uber hack because of eager fetching
-        return new ArrayList<Task> (new HashSet<Task>(super.list()));
+        return currentSession().createCriteria(Task.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
     }
 }

@@ -69,9 +69,7 @@ public class TaskController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public String showTasks(Model model) {
-        // eager fetching hax
-        Set<Task> tasks = new HashSet<Task> (taskDao.list());
-        model.addAttribute("tasks", tasks);
+        model.addAttribute("tasks", taskDao.list());
 
         return "tasks/list";
     }
@@ -93,7 +91,7 @@ public class TaskController {
             throw new TaskDeleteException(toDelete);
         }
 
-        // everything OK, see remaining employees
+        // everything OK, see remaining tasks
         return "redirect:/tasks";
     }
 
