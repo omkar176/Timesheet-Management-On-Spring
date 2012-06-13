@@ -1,4 +1,4 @@
-package org.timesheet.web;
+package org.timesheet.web.editors;
 
 import org.timesheet.domain.Manager;
 import org.timesheet.service.dao.ManagerDao;

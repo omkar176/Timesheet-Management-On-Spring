@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import org.timesheet.domain.Employee;
 import org.timesheet.domain.Manager;
 import org.timesheet.domain.Task;
+import org.timesheet.domain.Timesheet;
 import org.timesheet.service.GenericDao;
 import org.timesheet.service.dao.EmployeeDao;
 import org.timesheet.service.dao.ManagerDao;
 import org.timesheet.service.dao.TaskDao;
+import org.timesheet.service.dao.TimesheetDao;
 
 import java.util.List;
 
@@ -26,6 +28,9 @@ public final class EntityGenerator {
 
     @Autowired
     private TaskDao taskDao;
+
+    @Autowired
+    private TimesheetDao timesheetDao;
 
     public void generateDomain() {
         Employee steve = new Employee("Steve", "Design");
@@ -53,9 +58,19 @@ public final class EntityGenerator {
         Task centosTask = new Task("Deploying to CentOS", larry, linus);
 
         addAll(taskDao, springTask, tomcatTask, centosTask);
+
+        Timesheet linusOnSpring = new Timesheet(linus, springTask, 42);
+        Timesheet billOnTomcat = new Timesheet(bill, tomcatTask, 30);
+
+        addAll(timesheetDao, linusOnSpring, billOnTomcat);
     }
     
     public void deleteDomain() {
+        List<Timesheet> timesheets = timesheetDao.list();
+        for (Timesheet timesheet : timesheets) {
+            timesheetDao.remove(timesheet);
+        }
+
         List<Task> tasks = taskDao.list();
         for (Task task : tasks) {
             taskDao.remove(task);

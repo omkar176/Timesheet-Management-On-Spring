@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%--@elvariable id="task" type="org.timesheet.domain.Task"--%>
-<%--@elvariable id="managers" type="java.util.List<org.timesheet.domain.Manager"--%>
+
 
 <html>
 <head>

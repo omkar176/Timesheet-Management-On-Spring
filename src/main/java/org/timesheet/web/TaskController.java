@@ -14,6 +14,7 @@ import org.timesheet.domain.Task;
 import org.timesheet.service.dao.EmployeeDao;
 import org.timesheet.service.dao.ManagerDao;
 import org.timesheet.service.dao.TaskDao;
+import org.timesheet.web.editors.ManagerEditor;
 import org.timesheet.web.exceptions.TaskDeleteException;
 
 import java.util.*;
